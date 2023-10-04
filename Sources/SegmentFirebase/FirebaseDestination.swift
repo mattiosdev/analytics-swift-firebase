@@ -49,13 +49,8 @@ public class FirebaseDestination: DestinationPlugin {
 
     private var firebaseOptions: FirebaseOptions? = nil
 
-    public init(firebaseResource: String? = nil) {
-        if
-            let filePath = Bundle.main.path(forResource: firebaseResource, ofType: "plist"),
-            let options = FirebaseOptions(contentsOfFile: filePath)
-        {
-            self.firebaseOptions = options
-        }
+    public init(firebaseOptions: FirebaseOptions? = nil) {
+        self.firebaseOptions = firebaseOptions
     }
 
     public func update(settings: Settings, type: UpdateType) {
