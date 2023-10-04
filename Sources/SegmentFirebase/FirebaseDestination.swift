@@ -111,8 +111,13 @@ public class FirebaseDestination: DestinationPlugin {
     public func screen(event: ScreenEvent) -> ScreenEvent? {
         
         if let eventName = event.name {
+            var parameters: [String: Any] = [:]
+            if let properties = event.properties?.dictionaryValue {
+                parameters = returnMappedFirebaseParameters(properties)
+            }
+            parameters[FirebaseAnalytics.AnalyticsParameterScreenName] = eventName
             FirebaseAnalytics.Analytics.logEvent(FirebaseAnalytics.AnalyticsEventScreenView,
-                                                 parameters: [FirebaseAnalytics.AnalyticsParameterScreenName: eventName])
+                                                 parameters: parameters)
             analytics?.log(message: "Firebase setScreenName \(eventName)")
         }
 
@@ -217,7 +222,7 @@ private extension FirebaseDestination {
                                "Product Shared": FirebaseAnalytics.AnalyticsEventShare,
                                "Cart Shared": FirebaseAnalytics.AnalyticsEventShare,
                                "Products Searched": FirebaseAnalytics.AnalyticsEventSearch]
-    
+
     static let mappedKeys = ["products": FirebaseAnalytics.AnalyticsParameterItems,
                              "category": FirebaseAnalytics.AnalyticsParameterItemCategory,
                              "product_id": FirebaseAnalytics.AnalyticsParameterItemID,
@@ -231,8 +236,13 @@ private extension FirebaseDestination {
                              "total": FirebaseAnalytics.AnalyticsParameterValue,
                              "revenue": FirebaseAnalytics.AnalyticsParameterValue,
                              "order_id": FirebaseAnalytics.AnalyticsParameterTransactionID,
-                             "currency": FirebaseAnalytics.AnalyticsParameterCurrency]
-    
+                             "currency": FirebaseAnalytics.AnalyticsParameterCurrency,
+                             "utm_source": FirebaseAnalytics.AnalyticsParameterSource,
+                             "utm_medium": FirebaseAnalytics.AnalyticsParameterMedium,
+                             "utm_campaign": FirebaseAnalytics.AnalyticsParameterCampaign,
+                             "utm_term": FirebaseAnalytics.AnalyticsParameterTerm,
+                             "utm_content": FirebaseAnalytics.AnalyticsParameterContent
+    ]
 }
 
 
