@@ -106,7 +106,7 @@ public class FirebaseDestination: DestinationPlugin {
             returnMappedFirebaseParameters(context).forEach {
                 parameters[$0.key] = $0.value
             }
-      }
+        }
 
         FirebaseAnalytics.Analytics.logEvent(name, parameters: parameters)
         analytics?.log(message: "Firebase logEventWithName \(name) parameters \(String(describing: parameters))")
