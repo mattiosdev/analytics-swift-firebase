@@ -98,11 +98,16 @@ public class FirebaseDestination: DestinationPlugin {
     public func track(event: TrackEvent) -> TrackEvent? {
         
         let name = formatFirebaseEventNames(event.event)
-        var parameters: [String: Any]? = nil
+        var parameters: [String: Any] = [:]
         if let properties = event.properties?.dictionaryValue {
             parameters = returnMappedFirebaseParameters(properties)
         }
-        
+        if let context = event.context?.dictionaryValue {
+            returnMappedFirebaseParameters(context).forEach {
+                parameters[$0.key] = $0.value
+            }
+      }
+
         FirebaseAnalytics.Analytics.logEvent(name, parameters: parameters)
         analytics?.log(message: "Firebase logEventWithName \(name) parameters \(String(describing: parameters))")
         return event
@@ -111,14 +116,9 @@ public class FirebaseDestination: DestinationPlugin {
     public func screen(event: ScreenEvent) -> ScreenEvent? {
         
         if let eventName = event.name {
-            var parameters: [String: Any] = [:]
-            if let properties = event.properties?.dictionaryValue {
-                parameters = returnMappedFirebaseParameters(properties)
-            }
-            parameters[FirebaseAnalytics.AnalyticsParameterScreenName] = eventName
-            FirebaseAnalytics.Analytics.logEvent(FirebaseAnalytics.AnalyticsEventScreenView,
-                                                 parameters: parameters)
-            analytics?.log(message: "Firebase setScreenName \(eventName)")
+          FirebaseAnalytics.Analytics.logEvent(FirebaseAnalytics.AnalyticsEventScreenView,
+                                                           parameters: [FirebaseAnalytics.AnalyticsParameterScreenName: eventName])
+          analytics?.log(message: "Firebase setScreenName \(eventName)")
         }
 
 
