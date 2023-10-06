@@ -116,9 +116,9 @@ public class FirebaseDestination: DestinationPlugin {
     public func screen(event: ScreenEvent) -> ScreenEvent? {
         
         if let eventName = event.name {
-          FirebaseAnalytics.Analytics.logEvent(FirebaseAnalytics.AnalyticsEventScreenView,
-                                               parameters: [FirebaseAnalytics.AnalyticsParameterScreenName: eventName])
-          analytics?.log(message: "Firebase setScreenName \(eventName)")
+            FirebaseAnalytics.Analytics.logEvent(FirebaseAnalytics.AnalyticsEventScreenView,
+                                                 parameters: [FirebaseAnalytics.AnalyticsParameterScreenName: eventName])
+            analytics?.log(message: "Firebase setScreenName \(eventName)")
         }
 
 
