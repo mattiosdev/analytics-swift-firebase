@@ -98,14 +98,14 @@ public class FirebaseDestination: DestinationPlugin {
     public func track(event: TrackEvent) -> TrackEvent? {
         
         let name = formatFirebaseEventNames(event.event)
-        var parameters: [String: Any] = [:]
+        var parameters: [String: Any]? = nil
         if let properties = event.properties?.dictionaryValue {
             parameters = returnMappedFirebaseParameters(properties)
         }
+
         if let context = event.context?.dictionaryValue {
-            returnMappedFirebaseParameters(context).forEach {
-                parameters[$0.key] = $0.value
-            }
+            let mappedContext = returnMappedFirebaseParameters(context)
+            parameters = (parameters ?? [:]).merging(mappedContext) { (current, _) in current }
         }
 
         FirebaseAnalytics.Analytics.logEvent(name, parameters: parameters)
@@ -222,7 +222,7 @@ private extension FirebaseDestination {
                                "Product Shared": FirebaseAnalytics.AnalyticsEventShare,
                                "Cart Shared": FirebaseAnalytics.AnalyticsEventShare,
                                "Products Searched": FirebaseAnalytics.AnalyticsEventSearch]
-
+    
     static let mappedKeys = ["products": FirebaseAnalytics.AnalyticsParameterItems,
                              "category": FirebaseAnalytics.AnalyticsParameterItemCategory,
                              "product_id": FirebaseAnalytics.AnalyticsParameterItemID,
