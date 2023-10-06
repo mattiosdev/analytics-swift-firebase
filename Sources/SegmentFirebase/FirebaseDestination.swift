@@ -237,11 +237,11 @@ private extension FirebaseDestination {
                              "revenue": FirebaseAnalytics.AnalyticsParameterValue,
                              "order_id": FirebaseAnalytics.AnalyticsParameterTransactionID,
                              "currency": FirebaseAnalytics.AnalyticsParameterCurrency,
-                             "utm_source": FirebaseAnalytics.AnalyticsParameterSource,
-                             "utm_medium": FirebaseAnalytics.AnalyticsParameterMedium,
-                             "utm_campaign": FirebaseAnalytics.AnalyticsParameterCampaign,
-                             "utm_term": FirebaseAnalytics.AnalyticsParameterTerm,
-                             "utm_content": FirebaseAnalytics.AnalyticsParameterContent
+                             "source": FirebaseAnalytics.AnalyticsParameterSource,
+                             "medium": FirebaseAnalytics.AnalyticsParameterMedium,
+                             "name": FirebaseAnalytics.AnalyticsParameterCampaign,
+                             "term": FirebaseAnalytics.AnalyticsParameterTerm,
+                             "content": FirebaseAnalytics.AnalyticsParameterContent
     ]
 }
 
