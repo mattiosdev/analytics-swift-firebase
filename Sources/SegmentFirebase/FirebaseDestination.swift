@@ -103,8 +103,8 @@ public class FirebaseDestination: DestinationPlugin {
             parameters = returnMappedFirebaseParameters(properties)
         }
 
-        if let context = event.context?.dictionaryValue {
-            let mappedContext = returnMappedFirebaseParameters(context)
+        if let campaign = event.context?.dictionaryValue?["campaign"] as? [String: Any] {
+            let mappedContext = returnMappedFirebaseParameters(campaign)
             parameters = (parameters ?? [:]).merging(mappedContext) { (current, _) in current }
         }
 
