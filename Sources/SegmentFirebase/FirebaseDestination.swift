@@ -100,11 +100,11 @@ public class FirebaseDestination: DestinationPlugin {
         let name = formatFirebaseEventNames(event.event)
         var parameters: [String: Any]? = nil
         if let properties = event.properties?.dictionaryValue {
-            parameters = returnMappedFirebaseParameters(properties)
+            parameters = returnMappedFirebaseParameters(properties, for: FirebaseDestination.mappedKeys)
         }
 
         if  let campaign = event.context?.dictionaryValue?["campaign"] as? [String: Any] {
-            let campaignParameters = returnMappedFirebaseCampaignParameters(campaign)
+            let campaignParameters = returnMappedFirebaseParameters(campaign, for: FirebaseDestination.campaignMappedKeys)
             parameters = (parameters ?? [:]).merging(campaignParameters) { (current, _) in current }
             FirebaseAnalytics.Analytics.logEvent(FirebaseAnalytics.AnalyticsEventCampaignDetails, parameters: parameters)
             analytics?.log(message: "Firebase logEventWithName \(name) parameters \(String(describing: parameters))")
@@ -157,23 +157,23 @@ extension FirebaseDestination {
         }
     }
     
-    func returnMappedFirebaseParameters(_ properties: [String: Any]) -> [String: Any] {
-        
+    func returnMappedFirebaseParameters(_ properties: [String: Any], for keys: [String: String]) -> [String: Any] {
+
         
         var mappedValues = properties
         
-        for (key, firebaseKey) in FirebaseDestination.mappedKeys {
+        for (key, firebaseKey) in keys {
             if var data = properties[key] {
                 
                 mappedValues.removeValue(forKey: key)
                 
                 if let castData = data as? [String: Any] {
-                    data = returnMappedFirebaseParameters(castData)
+                    data = returnMappedFirebaseParameters(castData, for: keys)
                 } else if let castArray = data as? [Any] {
                     var updatedArray = [Any]()
                     for item in castArray {
                         if let castDictionary = item as? [String: Any] {
-                            updatedArray.append(returnMappedFirebaseParameters(castDictionary))
+                            updatedArray.append(returnMappedFirebaseParameters(castDictionary, for: keys))
                         } else {
                             updatedArray.append(item)
                         }
@@ -188,40 +188,6 @@ extension FirebaseDestination {
             }
         }
         
-        return mappedValues
-    }
-
-    func returnMappedFirebaseCampaignParameters(_ properties: [String: Any]) -> [String: Any] {
-
-
-        var mappedValues = properties
-
-        for (key, firebaseKey) in FirebaseDestination.campaignMappedKeys {
-            if var data = properties[key] {
-
-                mappedValues.removeValue(forKey: key)
-
-                if let castData = data as? [String: Any] {
-                    data = returnMappedFirebaseCampaignParameters(castData)
-                } else if let castArray = data as? [Any] {
-                    var updatedArray = [Any]()
-                    for item in castArray {
-                        if let castDictionary = item as? [String: Any] {
-                            updatedArray.append(returnMappedFirebaseCampaignParameters(castDictionary))
-                        } else {
-                            updatedArray.append(item)
-                        }
-                    }
-                    data = updatedArray
-                }
-
-                // Check key name for proper format
-                if let updatedFirebaseKey = try? formatFirebaseName(firebaseKey) {
-                    mappedValues[updatedFirebaseKey] = data
-                }
-            }
-        }
-
         return mappedValues
     }
 
