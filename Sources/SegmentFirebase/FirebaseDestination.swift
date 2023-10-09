@@ -103,9 +103,11 @@ public class FirebaseDestination: DestinationPlugin {
             parameters = returnMappedFirebaseParameters(properties)
         }
 
-        if let campaign = event.context?.dictionaryValue?["campaign"] as? [String: Any] {
-            let mappedContext = returnMappedFirebaseParameters(campaign)
-            parameters = (parameters ?? [:]).merging(mappedContext) { (current, _) in current }
+        if  let campaign = event.context?.dictionaryValue?["campaign"] as? [String: Any] {
+            let campaignParameters = returnMappedFirebaseCampaignParameters(campaign)
+            parameters = (parameters ?? [:]).merging(campaignParameters) { (current, _) in current }
+            FirebaseAnalytics.Analytics.logEvent(FirebaseAnalytics.AnalyticsEventCampaignDetails, parameters: parameters)
+            analytics?.log(message: "Firebase logEventWithName \(name) parameters \(String(describing: parameters))")
         }
 
         FirebaseAnalytics.Analytics.logEvent(name, parameters: parameters)
@@ -188,7 +190,41 @@ extension FirebaseDestination {
         
         return mappedValues
     }
-    
+
+    func returnMappedFirebaseCampaignParameters(_ properties: [String: Any]) -> [String: Any] {
+
+
+        var mappedValues = properties
+
+        for (key, firebaseKey) in FirebaseDestination.campaignMappedKeys {
+            if var data = properties[key] {
+
+                mappedValues.removeValue(forKey: key)
+
+                if let castData = data as? [String: Any] {
+                    data = returnMappedFirebaseCampaignParameters(castData)
+                } else if let castArray = data as? [Any] {
+                    var updatedArray = [Any]()
+                    for item in castArray {
+                        if let castDictionary = item as? [String: Any] {
+                            updatedArray.append(returnMappedFirebaseCampaignParameters(castDictionary))
+                        } else {
+                            updatedArray.append(item)
+                        }
+                    }
+                    data = updatedArray
+                }
+
+                // Check key name for proper format
+                if let updatedFirebaseKey = try? formatFirebaseName(firebaseKey) {
+                    mappedValues[updatedFirebaseKey] = data
+                }
+            }
+        }
+
+        return mappedValues
+    }
+
     // Makes sure all traits are string based for Firebase API
     func mapToStrings(_ mapDictionary: [String: Any], finalize: (String, String) -> Void) {
         
@@ -221,8 +257,9 @@ private extension FirebaseDestination {
                                "Product Added to Wishlist": FirebaseAnalytics.AnalyticsEventAddToWishlist,
                                "Product Shared": FirebaseAnalytics.AnalyticsEventShare,
                                "Cart Shared": FirebaseAnalytics.AnalyticsEventShare,
-                               "Products Searched": FirebaseAnalytics.AnalyticsEventSearch]
-    
+                               "Products Searched": FirebaseAnalytics.AnalyticsEventSearch,
+                               "Campaign Details": FirebaseAnalytics.AnalyticsEventCampaignDetails]
+
     static let mappedKeys = ["products": FirebaseAnalytics.AnalyticsParameterItems,
                              "category": FirebaseAnalytics.AnalyticsParameterItemCategory,
                              "product_id": FirebaseAnalytics.AnalyticsParameterItemID,
@@ -236,12 +273,14 @@ private extension FirebaseDestination {
                              "total": FirebaseAnalytics.AnalyticsParameterValue,
                              "revenue": FirebaseAnalytics.AnalyticsParameterValue,
                              "order_id": FirebaseAnalytics.AnalyticsParameterTransactionID,
-                             "currency": FirebaseAnalytics.AnalyticsParameterCurrency,
-                             "source": FirebaseAnalytics.AnalyticsParameterSource,
-                             "medium": FirebaseAnalytics.AnalyticsParameterMedium,
-                             "name": FirebaseAnalytics.AnalyticsParameterCampaign,
-                             "term": FirebaseAnalytics.AnalyticsParameterTerm,
-                             "content": FirebaseAnalytics.AnalyticsParameterContent
+                             "currency": FirebaseAnalytics.AnalyticsParameterCurrency
+    ]
+
+    static let campaignMappedKeys = ["source": FirebaseAnalytics.AnalyticsParameterSource,
+                                     "medium": FirebaseAnalytics.AnalyticsParameterMedium,
+                                     "name": FirebaseAnalytics.AnalyticsParameterCampaign,
+                                     "term": FirebaseAnalytics.AnalyticsParameterTerm,
+                                     "content": FirebaseAnalytics.AnalyticsParameterContent
     ]
 }
 
