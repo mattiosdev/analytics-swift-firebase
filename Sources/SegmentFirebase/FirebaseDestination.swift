@@ -156,7 +156,7 @@ extension FirebaseDestination {
     }
     
     func returnMappedFirebaseParameters(_ properties: [String: Any], for keys: [String: String]) -> [String: Any] {
-
+        
         
         var mappedValues = properties
         
@@ -188,7 +188,7 @@ extension FirebaseDestination {
         
         return mappedValues
     }
-
+    
     // Makes sure all traits are string based for Firebase API
     func mapToStrings(_ mapDictionary: [String: Any], finalize: (String, String) -> Void) {
         
@@ -222,7 +222,7 @@ private extension FirebaseDestination {
                                "Product Shared": FirebaseAnalytics.AnalyticsEventShare,
                                "Cart Shared": FirebaseAnalytics.AnalyticsEventShare,
                                "Products Searched": FirebaseAnalytics.AnalyticsEventSearch]
-
+    
     static let mappedKeys = ["products": FirebaseAnalytics.AnalyticsParameterItems,
                              "category": FirebaseAnalytics.AnalyticsParameterItemCategory,
                              "product_id": FirebaseAnalytics.AnalyticsParameterItemID,
@@ -237,7 +237,7 @@ private extension FirebaseDestination {
                              "revenue": FirebaseAnalytics.AnalyticsParameterValue,
                              "order_id": FirebaseAnalytics.AnalyticsParameterTransactionID,
                              "currency": FirebaseAnalytics.AnalyticsParameterCurrency]
-
+    
     static let campaignMappedKeys = ["source": "utm_source",
                                      "medium": "utm_medium",
                                      "name": "utm_campaign",
