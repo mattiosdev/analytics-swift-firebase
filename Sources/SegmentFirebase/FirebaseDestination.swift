@@ -105,9 +105,7 @@ public class FirebaseDestination: DestinationPlugin {
 
         if let campaign = event.context?.dictionaryValue?["campaign"] as? [String: Any] {
             let campaignParameters = returnMappedFirebaseParameters(campaign, for: FirebaseDestination.campaignMappedKeys)
-            let parameters = (parameters ?? [:]).merging(campaignParameters) { (current, _) in current }
-            FirebaseAnalytics.Analytics.logEvent(FirebaseAnalytics.AnalyticsEventCampaignDetails, parameters: parameters)
-            analytics?.log(message: "Firebase logEventWithName \(name) parameters \(String(describing: parameters))")
+            parameters = (parameters ?? [:]).merging(campaignParameters) { (current, _) in current }
         }
 
         FirebaseAnalytics.Analytics.logEvent(name, parameters: parameters)
@@ -239,15 +237,13 @@ private extension FirebaseDestination {
                              "total": FirebaseAnalytics.AnalyticsParameterValue,
                              "revenue": FirebaseAnalytics.AnalyticsParameterValue,
                              "order_id": FirebaseAnalytics.AnalyticsParameterTransactionID,
-                             "currency": FirebaseAnalytics.AnalyticsParameterCurrency
-    ]
+                             "currency": FirebaseAnalytics.AnalyticsParameterCurrency]
 
-    static let campaignMappedKeys = ["source": FirebaseAnalytics.AnalyticsParameterSource,
-                                     "medium": FirebaseAnalytics.AnalyticsParameterMedium,
-                                     "name": FirebaseAnalytics.AnalyticsParameterCampaign,
-                                     "term": FirebaseAnalytics.AnalyticsParameterTerm,
-                                     "content": FirebaseAnalytics.AnalyticsParameterContent
-    ]
+    static let campaignMappedKeys = ["source": "utm_source",
+                                     "medium": "utm_medium",
+                                     "name": "utm_campaign",
+                                     "term": "utm_term",
+                                     "content": "utm_content"]
 }
 
 
