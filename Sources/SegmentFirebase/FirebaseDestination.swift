@@ -221,8 +221,7 @@ private extension FirebaseDestination {
                                "Product Added to Wishlist": FirebaseAnalytics.AnalyticsEventAddToWishlist,
                                "Product Shared": FirebaseAnalytics.AnalyticsEventShare,
                                "Cart Shared": FirebaseAnalytics.AnalyticsEventShare,
-                               "Products Searched": FirebaseAnalytics.AnalyticsEventSearch,
-                               "Campaign Details": FirebaseAnalytics.AnalyticsEventCampaignDetails]
+                               "Products Searched": FirebaseAnalytics.AnalyticsEventSearch]
 
     static let mappedKeys = ["products": FirebaseAnalytics.AnalyticsParameterItems,
                              "category": FirebaseAnalytics.AnalyticsParameterItemCategory,
